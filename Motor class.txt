@@ -1,0 +1,111 @@
+#include "mbed.h"
+#include "stdio.h"
+#include "iostream"
+
+DigitalOut in1(D5), in2(D2), in3(D3), in4(D4);
+//pin defintions for directions
+
+PwmOut ENA(D10), ENB(D11);  //pwm definitions
+
+class Motor
+{
+public:
+    Motor() {}; //supposed to be initialiser list
+
+    void change_period1(int pulse1);
+    void change_period2(int pulse2);
+
+    //combined functions here
+    void forward(void);
+    void back(void);
+    void right(void);
+    void left(void);
+    void slow(void);
+
+private:
+    int pulse1, pulse2;
+};
+
+
+int main()
+{
+    char response[80];
+    Motor spin;
+
+    spin.change_period1(10);
+    spin.change_period2(10);
+    //spin.forward();
+    //spin.back();
+    //spin.right();
+    //spin.left();
+
+    while(1) {
+        printf("Which way? f,b,r or l.      ");
+        scanf("%s", response);  //gets a user response for direction;
+        printf("%s\n", response);
+
+        if(response == "f") {
+            spin.forward();
+        } else if (response == "b") {
+            spin.back();
+        } else if (response == "r") {
+            spin.right();
+        } else if (response == "l") {
+            spin.left();
+        } else {
+            spin.slow();
+        }
+    };
+}
+
+void Motor :: forward(void)
+{
+    in1 = 1;    //motor1 CW
+    in2 = 0;
+    in3 = 0;    //motor2 CCW
+    in4 = 1;
+}
+
+void Motor :: back(void)
+{
+    in1 = 0;    //motor1 CCW
+    in2 = 1;
+    in3 = 1;    //motor2 CW
+    in4 = 0;
+}
+
+void Motor :: right(void)
+{
+    in1 = 0;    //motor1 CCW
+    in2 = 1;
+    in3 = 0;    //motor2 CCW
+    in4 = 1;
+}
+
+void Motor :: left(void)
+{
+    in1 = 1;    //motor1 CW
+    in2 = 0;
+    in3 = 1;    //motor2 CW
+    in4 = 0;
+}
+
+void Motor :: slow(void)
+{
+    in1 = 0;
+    in2 = 0;
+    in3 = 0;
+    in4 = 0;
+}
+
+void Motor :: change_period1(int pulse1)
+{
+    ENA.pulsewidth_ms(pulse1);
+    ENA.write(0.1f);
+}
+
+void Motor :: change_period2(int pulse2)
+{
+    ENB.pulsewidth_ms(pulse2);
+    ENB.write(0.1f);
+}
